@@ -2,8 +2,13 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar todo el proyecto
-COPY . .
+# Copiar archivos críticos primero
+COPY package.json package-lock.json* ./
+COPY backend/package.json backend/package-lock.json* ./backend/
+COPY public ./public
+COPY data ./data
+COPY 5.html resultados.xlsx railway.json ./
+COPY backend/src ./backend/src
 
 # Instalar dependencias del backend
 WORKDIR /app/backend

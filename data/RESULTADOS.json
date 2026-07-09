@@ -1,0 +1,31 @@
+{
+  "clientes": [
+    {
+      "id": 1,
+      "nombre_completo": "HOLGER ANTONIO ORTEGA PINEDA",
+      "numero_documento": "3105898247",
+      "telefono": "3105898247",
+      "token_unico": "d4f8c9a2-b1e7-4f6c-9d3e-a8c2f1b5e7a9",
+      "saldo": "$49,105.53",
+      "estado": "activo"
+    },
+    {
+      "id": 2,
+      "nombre_completo": "MARIA GARCÍA RODRIGUEZ",
+      "numero_documento": "1098765432",
+      "telefono": "3102224455",
+      "token_unico": "e5g9d0b3-c2f8-5g7d-0e4f-b9d3g2c6f8b0",
+      "saldo": "$125,330.00",
+      "estado": "activo"
+    },
+    {
+      "id": 3,
+      "nombre_completo": "CARLOS PÉREZ MARTÍNEZ",
+      "numero_documento": "79654321",
+      "telefono": "3103334455",
+      "token_unico": "f6h0e1c4-d3g9-6h8e-1f5g-c0e4h3d7g9c1",
+      "saldo": "$89,450.75",
+      "estado": "activo"
+    }
+  ]
+}

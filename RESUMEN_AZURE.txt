@@ -1,0 +1,208 @@
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    DESPLIEGUE A AZURE - RESUMEN VISUAL                   ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+
+┌─ FLUJO ACTUAL (LOCALHOST) ──────────────────────────────────────────────────┐
+│                                                                             │
+│  TU PC                                                                      │
+│  ├─ localhost:3001 (servidor)                                              │
+│  ├─ data/clientes-con-tokens.json (base de datos)                          │
+│  └─ 5.html (página)                                                        │
+│                                                                             │
+│  ENLACE SMS: http://localhost:3001/5.html?t=TOKEN                          │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ FLUJO EN AZURE (PRODUCCIÓN) ───────────────────────────────────────────────┐
+│                                                                             │
+│  AZURE CLOUD                                                                │
+│  ├─ App Service (servidor Node.js)                                          │
+│  ├─ Storage (datos guardados)                                               │
+│  └─ HTTPS automático                                                        │
+│                                                                             │
+│  OPCIÓN 1 (Más simple):                                                    │
+│  ENLACE SMS: https://mi-sms-xyz.azurewebsites.net/5.html?t=TOKEN           │
+│                                                                             │
+│  OPCIÓN 2 (Con dominio):                                                   │
+│  ENLACE SMS: https://api.tudominio.com/5.html?t=TOKEN                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ PASOS PARA DESPLEGAR ──────────────────────────────────────────────────────┐
+│                                                                             │
+│  PASO 1: Actualizar .env                                                    │
+│  ────────────────────                                                       │
+│  Cambiar:  PORT=3000    →    PORT=8080                                     │
+│  Cambiar:  NODE_ENV=development  →  NODE_ENV=production                    │
+│                                                                             │
+│  Archivo: backend/.env                                                      │
+│                                                                             │
+│                                                                             │
+│  PASO 2: Crear App Service en Azure                                        │
+│  ──────────────────────────────────                                        │
+│  1. Ve a portal.azure.com                                                  │
+│  2. Busca "App Service"                                                    │
+│  3. Crea uno nuevo                                                         │
+│  4. Selecciona:                                                            │
+│     - Nombre: mi-sms-xyz                                                   │
+│     - Runtime: Node 18 LTS                                                 │
+│     - Región: Elige la más cercana                                         │
+│     - Plan: B1 (mínimo, $15/mes)                                           │
+│                                                                             │
+│                                                                             │
+│  PASO 3: Desplegar tu código                                               │
+│  ──────────────────────────────                                            │
+│  Opción A: ZIP Upload (más simple)                                         │
+│  ─────────────────────────────────                                         │
+│  1. Comprime todo el proyecto                                              │
+│  2. En Azure → App Service → Centro de implementación                       │
+│  3. Sube el ZIP                                                            │
+│  4. Espera a que se extraiga y instale                                     │
+│                                                                             │
+│  Opción B: Git Push (más profesional)                                      │
+│  ──────────────────────────────────────                                    │
+│  1. git init                                                               │
+│  2. git add .                                                              │
+│  3. git commit -m "SMS"                                                    │
+│  4. git remote add azure [URL-de-azure]                                    │
+│  5. git push azure master                                                  │
+│                                                                             │
+│                                                                             │
+│  PASO 4: Configurar variables en Azure                                     │
+│  ───────────────────────────────────────                                   │
+│  En Azure Portal → App Service → Configuración                             │
+│  Agrega:                                                                    │
+│  ├─ PORT = 8080                                                            │
+│  ├─ NODE_ENV = production                                                  │
+│  └─ RATE_LIMIT_MAX_REQUESTS = 10                                           │
+│                                                                             │
+│                                                                             │
+│  PASO 5: Prueba                                                            │
+│  ─────────────                                                             │
+│  Abre en navegador:                                                        │
+│  https://mi-sms-xyz.azurewebsites.net/health                               │
+│                                                                             │
+│  Deberías ver:                                                             │
+│  {"status":"ok","timestamp":"..."}                                         │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ TUS ENLACES SMS ───────────────────────────────────────────────────────────┐
+│                                                                             │
+│  Actual (localhost):                                                       │
+│  ━━━━━━━━━━━━━━━━━━━                                                       │
+│  http://localhost:3001/5.html?t=13f3612f-2002-4440-9f4d-8fb3ca8be22e      │
+│                                                                             │
+│                                                                             │
+│  En Azure (opción simple):                                                 │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━                                                 │
+│  https://mi-sms-xyz.azurewebsites.net/5.html?t=13f3612f-2002-4440-9f4d-8fb3ca8be22e
+│                                                                             │
+│                                                                             │
+│  En Azure (con dominio personalizado):                                     │
+│  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━                                        │
+│  https://api.tudominio.com/5.html?t=13f3612f-2002-4440-9f4d-8fb3ca8be22e  │
+│                                                                             │
+│  Tu SMS sería:                                                             │
+│  ───────────────                                                           │
+│  "Hola HOLGER tenemos una oferta exclusiva:                                │
+│   https://api.tudominio.com/5.html?t=13f3612f-2002-4440-9f4d-8fb3ca8be22e"│
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ COSTOS EN AZURE ───────────────────────────────────────────────────────────┐
+│                                                                             │
+│  App Service B1:           ~$15 USD/mes                                    │
+│  Blob Storage (si lo usas): ~$0.50 USD/mes                                │
+│  Backup automático:         Incluido ✓                                     │
+│  HTTPS/SSL:                 Gratis ✓                                       │
+│  ────────────────────────────────────                                      │
+│  TOTAL MENSUAL:             ~$15 USD                                       │
+│                                                                             │
+│  Más barato que:                                                           │
+│  - Hosting tradicional: $50+                                               │
+│  - Dominio propio: $12/año                                                 │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ VENTAJAS DE USAR AZURE ────────────────────────────────────────────────────┐
+│                                                                             │
+│  ✅ HTTPS automático y gratis                                              │
+│  ✅ Escalable automáticamente                                              │
+│  ✅ Backup automático diario                                               │
+│  ✅ 99.95% uptime garantizado                                              │
+│  ✅ Dominio personalizado fácil                                            │
+│  ✅ Monitoreo en tiempo real                                               │
+│  ✅ Logs detallados de errores                                             │
+│  ✅ Recuperación en 1 click                                                │
+│  ✅ CDN para archivos estáticos (opcional)                                 │
+│  ✅ Analytics de usuarios                                                  │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ ARCHIVOS ESPECIALES ───────────────────────────────────────────────────────┐
+│                                                                             │
+│  He creado 3 archivos con instrucciones:                                   │
+│                                                                             │
+│  📄 DESPLIEGUE_AZURE.md                                                    │
+│     └─ Guía completa con todas las opciones                                │
+│                                                                             │
+│  📄 AZURE_RAPIDO.md                                                        │
+│     └─ Instrucciones rápidas (10 minutos)                                  │
+│                                                                             │
+│  📄 CONFIGURAR_AZURE.md                                                    │
+│     └─ Qué cambiar en tu código exactamente                                │
+│                                                                             │
+│  Lee primero: AZURE_RAPIDO.md ← EMPIEZA AQUÍ                              │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+┌─ RESUMEN DE COMANDOS ───────────────────────────────────────────────────────┐
+│                                                                             │
+│  1️⃣  Cambiar .env                                                          │
+│      backend/.env: PORT=8080, NODE_ENV=production                          │
+│                                                                             │
+│  2️⃣  Comprimir proyecto                                                    │
+│      Windows: Compress-Archive -Path * -DestinationPath app.zip            │
+│      Mac/Linux: zip -r app.zip . -x "node_modules/*"                       │
+│                                                                             │
+│  3️⃣  Crear App Service (CLI)                                              │
+│      az group create --name sms --location eastus                          │
+│      az appservice plan create --name sms-plan --resource-group sms --sku B1
+│      az webapp create --name mi-sms-xyz --resource-group sms \             │
+│        --plan sms-plan --runtime "NODE|18-lts"                             │
+│                                                                             │
+│  4️⃣  Desplegar                                                             │
+│      az webapp deployment source config-zip --name mi-sms-xyz \            │
+│        --resource-group sms --src app.zip                                  │
+│                                                                             │
+│  5️⃣  Prueba                                                                │
+│      curl https://mi-sms-xyz.azurewebsites.net/health                      │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║         Tu código YA está listo para Azure sin cambios grandes             ║
+║         Solo necesitas:                                                    ║
+║         1. Cambiar PORT a 8080 en .env                                     ║
+║         2. Comprimir proyecto                                              ║
+║         3. Subirlo a Azure                                                 ║
+║         4. ¡LISTO! Tu app está en la nube                                  ║
+║                                                                            ║
+║         Tiempo total: 10 minutos                                           ║
+║         Costo: $15/mes                                                     ║
+║         Resultado: Profesional, seguro y escalable ✓                       ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+

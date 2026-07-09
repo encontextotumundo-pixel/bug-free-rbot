@@ -1,0 +1,14 @@
+{
+  "eventos": [
+    {
+      "token": "13f3612f-2002-4440-9f4d-8fb3ca8be22e",
+      "tipo": "open",
+      "timestamp": "2026-07-09T22:28:34.485Z",
+      "ip": "::1",
+      "navegador": "Chrome",
+      "so": "Windows",
+      "contador_aperturas": 1,
+      "id": 1
+    }
+  ]
+}

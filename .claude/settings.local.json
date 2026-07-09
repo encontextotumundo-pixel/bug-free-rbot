@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(curl http://localhost:3000/health)",
+      "Bash(node leer-excel.js)",
+      "Bash(curl -s http://localhost:3000/api/client/123)",
+      "Bash(node obtener-tokens.js)",
+      "Bash(pkill -f \"node.*index.js\")",
+      "Bash(awk '{print $2}')",
+      "Bash(xargs kill -9)",
+      "Bash(curl -s http://localhost:3000/health)",
+      "Bash(curl -s http://localhost:3000/api/client/13f3612f-2002-4440-9f4d-8fb3ca8be22e)",
+      "Bash(curl -s http://localhost:3001/api/client/13f3612f-2002-4440-9f4d-8fb3ca8be22e)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git init *)",
+      "Bash(git commit -m 'Proyecto SMS personalizado: lista para despliegue en Blob Storage + Railway *)"
+    ]
+  }
+}

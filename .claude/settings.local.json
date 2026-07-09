@@ -16,7 +16,9 @@
       "Bash(git add *)",
       "Bash(git commit *)",
       "Bash(git init *)",
-      "Bash(git commit -m 'Proyecto SMS personalizado: lista para despliegue en Blob Storage + Railway *)"
+      "Bash(git commit -m 'Proyecto SMS personalizado: lista para despliegue en Blob Storage + Railway *)",
+      "Bash(git remote *)",
+      "Bash(git push *)"
     ]
   }
 }

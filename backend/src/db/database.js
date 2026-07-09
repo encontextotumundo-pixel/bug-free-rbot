@@ -5,7 +5,7 @@ import XLSX from 'xlsx';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const PROJECT_ROOT = path.join(__dirname, '../../../');
+const PROJECT_ROOT = path.join(__dirname, '../..');
 
 class Database {
   constructor() {

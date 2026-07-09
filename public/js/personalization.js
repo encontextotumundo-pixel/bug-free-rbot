@@ -1,6 +1,6 @@
 // Configuración de URL de API
-// IMPORTANTE: Después de desplegar en Railway, reemplaza esto con tu URL real
-const API_BASE_URL = 'https://sms-api-produccion.up.railway.app';
+// URL de Railway en producción
+const API_BASE_URL = 'https://bug-free-rbot-production.up.railway.app';
 
 // Si estás en desarrollo local, descomenta esta línea:
 // const API_BASE_URL = 'http://localhost:3001';

@@ -4,9 +4,6 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "numReplicas": 1,
-    "restartPolicyMaxRetries": 0,
-    "restartPolicyWindowMs": 60000,
     "startCommand": "cd backend && npm start"
   }
 }

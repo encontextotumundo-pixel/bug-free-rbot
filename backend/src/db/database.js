@@ -152,7 +152,23 @@ class Database {
         return [];
       }
       const data = JSON.parse(fs.readFileSync(this.eventsPath, 'utf-8'));
+      if (!token) {
+        return data.eventos; // Retornar todos si token es null
+      }
       return data.eventos.filter(e => e.token === token);
+    } catch (error) {
+      console.error('Error leyendo eventos:', error);
+      return [];
+    }
+  }
+
+  getAllEvents() {
+    try {
+      if (!fs.existsSync(this.eventsPath)) {
+        return [];
+      }
+      const data = JSON.parse(fs.readFileSync(this.eventsPath, 'utf-8'));
+      return data.eventos || [];
     } catch (error) {
       console.error('Error leyendo eventos:', error);
       return [];

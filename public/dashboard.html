@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard SMS Personalizado - Claro</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .header-stats {
+            display: flex;
+            gap: 30px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .tab-button {
+            padding: 12px 24px;
+            border: none;
+            background: #f0f0f0;
+            color: #666;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .tab-button.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-button:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+            color: #666;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .token {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 3px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-copy {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-copy:hover {
+            background: #5568d3;
+        }
+
+        .btn-edit {
+            background: #48bb78;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .btn-edit:hover {
+            background: #38a169;
+        }
+
+        .btn-export {
+            background: #ed8936;
+            color: white;
+            padding: 12px 24px;
+            margin-bottom: 20px;
+        }
+
+        .btn-export:hover {
+            background: #dd6b20;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+            flex: 1;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .link-column {
+            max-width: 300px;
+            word-break: break-all;
+            font-size: 12px;
+        }
+
+        .success-message {
+            background: #c6f6d5;
+            color: #22543d;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header-stats {
+                width: 100%;
+                justify-content: space-around;
+                margin-top: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h1>📊 Dashboard SMS Personalizado</h1>
+                <p>Sistema de campañas de SMS con personalización avanzada</p>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalClients">0</div>
+                    <div class="stat-label">Clientes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalOpens">0</div>
+                    <div class="stat-label">Aperturas</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="totalClicks">0</div>
+                    <div class="stat-label">Clics</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab-button active" onclick="switchTab('clients')">👥 Clientes & Enlaces</button>
+            <button class="tab-button" onclick="switchTab('analytics')">📈 Analítica</button>
+            <button class="tab-button" onclick="switchTab('settings')">⚙️ Configuración</button>
+        </div>
+
+        <!-- TAB 1: Clientes & Enlaces -->
+        <div id="clients" class="tab-content active">
+            <div class="success-message" id="successMessage">✅ Operación completada exitosamente</div>
+
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Buscar por nombre, documento o teléfono..." onkeyup="filterTable()">
+            </div>
+
+            <button class="btn btn-export" onclick="exportToExcel()">📥 Descargar Excel</button>
+
+            <div class="table-container">
+                <table id="clientsTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Cliente</th>
+                            <th>Documento</th>
+                            <th>Teléfono</th>
+                            <th>Token</th>
+                            <th>Enlace SMS</th>
+                            <th>Saldo</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientsTableBody">
+                        <tr><td colspan="8" class="loading"><div class="spinner"></div>Cargando clientes...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB 2: Analítica -->
+        <div id="analytics" class="tab-content">
+            <div class="stats-grid">
+                <div class="chart-container">
+                    <canvas id="eventTypesChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="eventsByDateChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB 3: Configuración -->
+        <div id="settings" class="tab-content">
+            <h2>Configuración del Sistema</h2>
+            <div style="margin-top: 20px; color: #666;">
+                <p><strong>🔐 URL de Azure Blob Storage:</strong><br>
+                https://jelptco.blob.core.windows.net/kiki/</p>
+
+                <p style="margin-top: 15px;"><strong>🚀 URL de API Railway:</strong><br>
+                https://bug-free-rbot-production.up.railway.app</strong></p>
+
+                <p style="margin-top: 15px;"><strong>📂 Carpeta de Datos:</strong><br>
+                /data/clientes-con-tokens.json</p>
+
+                <p style="margin-top: 15px;"><strong>📊 Eventos Registrados:</strong><br>
+                /data/events.json</p>
+
+                <p style="margin-top: 15px;"><strong>🛡️ Rate Limiting:</strong><br>
+                10 solicitudes por IP cada 5 minutos</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar saldo -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <h2>Actualizar Saldo</h2>
+            <div class="form-group">
+                <label>Cliente:</label>
+                <input type="text" id="editClientName" readonly>
+            </div>
+            <div class="form-group">
+                <label>Nuevo Saldo:</label>
+                <input type="text" id="editBalance" placeholder="Ej: $1500.00">
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" onclick="saveBalance()">Guardar</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allClients = [];
+        let allStats = {};
+        let currentEditToken = null;
+
+        // Cargar datos al iniciar
+        window.onload = () => {
+            loadClients();
+            loadStats();
+            setInterval(loadStats, 30000); // Actualizar cada 30 segundos
+        };
+
+        // Cargar clientes
+        async function loadClients() {
+            try {
+                const response = await fetch('https://bug-free-rbot-production.up.railway.app/api/dashboard/clients');
+                const result = await response.json();
+
+                if (result.success) {
+                    allClients = result.data;
+                    renderClients();
+                    document.getElementById('totalClients').textContent = result.total;
+                }
+            } catch (error) {
+                console.error('Error cargando clientes:', error);
+                document.getElementById('clientsTableBody').innerHTML =
+                    '<tr><td colspan="8" style="color: red; text-align: center;">Error al cargar clientes</td></tr>';
+            }
+        }
+
+        // Renderizar tabla de clientes
+        function renderClients() {
+            const tbody = document.getElementById('clientsTableBody');
+            tbody.innerHTML = allClients.map(client => `
+                <tr>
+                    <td>${client.id}</td>
+                    <td><strong>${client.nombre_completo}</strong></td>
+                    <td>${client.numero_documento}</td>
+                    <td>${client.telefono}</td>
+                    <td><span class="token">${client.token_unico}</span></td>
+                    <td class="link-column">
+                        <span title="https://jelptco.blob.core.windows.net/kiki/5.html?t=${client.token_unico}">
+                            ...?t=${client.token_unico.substring(0, 8)}...
+                        </span>
+                    </td>
+                    <td>${client.saldo}</td>
+                    <td>
+                        <button class="btn btn-copy" onclick="copyLink('${client.token_unico}')">Copiar</button>
+                        <button class="btn btn-edit" onclick="openEditModal('${client.token_unico}', '${client.nombre_completo}')">Editar</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // Cargar estadísticas
+        async function loadStats() {
+            try {
+                const response = await fetch('https://bug-free-rbot-production.up.railway.app/api/dashboard/stats');
+                const result = await response.json();
+
+                if (result.success) {
+                    allStats = result.data;
+                    document.getElementById('totalOpens').textContent = allStats.total_opens;
+                    document.getElementById('totalClicks').textContent = allStats.total_clicks;
+                    renderCharts();
+                }
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+            }
+        }
+
+        // Renderizar gráficos
+        function renderCharts() {
+            // Gráfico de tipos de eventos
+            const eventTypesCtx = document.getElementById('eventTypesChart').getContext('2d');
+            new Chart(eventTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Aperturas', 'Clics'],
+                    datasets: [{
+                        data: [allStats.events_by_type.open || 0, allStats.events_by_type.click || 0],
+                        backgroundColor: ['#667eea', '#48bb78'],
+                        borderColor: ['#667eea', '#48bb78'],
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Eventos por Tipo'
+                        }
+                    }
+                }
+            });
+
+            // Gráfico de eventos por fecha
+            const dates = Object.keys(allStats.events_by_date || {});
+            const counts = Object.values(allStats.events_by_date || {});
+
+            const eventsByDateCtx = document.getElementById('eventsByDateChart').getContext('2d');
+            new Chart(eventsByDateCtx, {
+                type: 'bar',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Eventos',
+                        data: counts,
+                        backgroundColor: '#667eea',
+                        borderColor: '#667eea',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Eventos por Fecha'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Funciones auxiliares
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function copyLink(token) {
+            const link = `https://jelptco.blob.core.windows.net/kiki/5.html?t=${token}`;
+            navigator.clipboard.writeText(link).then(() => {
+                showSuccess('Enlace copiado al portapapeles');
+            });
+        }
+
+        function filterTable() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            document.querySelectorAll('#clientsTableBody tr').forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        }
+
+        function openEditModal(token, name) {
+            currentEditToken = token;
+            document.getElementById('editClientName').value = name;
+            document.getElementById('editBalance').value = '';
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('active');
+        }
+
+        async function saveBalance() {
+            const newBalance = document.getElementById('editBalance').value;
+            if (!newBalance) {
+                alert('Ingresa el nuevo saldo');
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    `https://bug-free-rbot-production.up.railway.app/api/dashboard/clients/${currentEditToken}/update-balance`,
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ saldo: newBalance })
+                    }
+                );
+
+                if (response.ok) {
+                    loadClients();
+                    closeModal();
+                    showSuccess('Saldo actualizado correctamente');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error al actualizar saldo');
+            }
+        }
+
+        function exportToExcel() {
+            const csv = [
+                ['ID', 'Cliente', 'Documento', 'Teléfono', 'Token', 'Enlace SMS', 'Saldo']
+            ];
+
+            allClients.forEach(client => {
+                csv.push([
+                    client.id,
+                    client.nombre_completo,
+                    client.numero_documento,
+                    client.telefono,
+                    client.token_unico,
+                    `https://jelptco.blob.core.windows.net/kiki/5.html?t=${client.token_unico}`,
+                    client.saldo
+                ]);
+            });
+
+            const csvContent = csv.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `clientes-tokens-${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        function showSuccess(message) {
+            const msg = document.getElementById('successMessage');
+            msg.textContent = '✅ ' + message;
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+</html>

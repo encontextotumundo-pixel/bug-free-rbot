@@ -18,7 +18,17 @@
       "Bash(git init *)",
       "Bash(git commit -m 'Proyecto SMS personalizado: lista para despliegue en Blob Storage + Railway *)",
       "Bash(git remote *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(git pull *)",
+      "Bash(git checkout *)",
+      "Bash(curl -s -o /dev/null -w \"Status: %{http_code}\\\\n\" \"https://jelptco.blob.core.windows.net/kiki/5.html\")",
+      "Bash(curl -s \"https://bug-free-rbot-production.up.railway.app/health\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -s \"https://bug-free-rbot-production.up.railway.app/api/client/13f3612f-2002-4440-9f4d-8fb3ca8be22e\")",
+      "mcp__claude-in-chrome__navigate",
+      "Bash(curl -v https://bug-free-rbot-production.up.railway.app/api/client/13f3612f-2002-4440-9f4d-8fb3ca8be22e)",
+      "Bash(curl -s https://bug-free-rbot-production.up.railway.app/health)",
+      "Bash(curl -s https://bug-free-rbot-production.up.railway.app/api/client/13f3612f-2002-4440-9f4d-8fb3ca8be22e)"
     ]
   }
 }

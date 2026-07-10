@@ -2,26 +2,24 @@ FROM node:18-alpine
 
 WORKDIR /app
 
-# Copiar archivos de configuración y dependencias
-COPY backend/package.json backend/package-lock.json* ./backend/
-
-# Copiar datos y archivos necesarios
-COPY data ./data
-COPY public ./public
-COPY 5.html resultados.xlsx railway.json ./
-
-# Copiar código del backend
-COPY backend/src ./backend/src
+# Copiar TODO el proyecto (excepto lo que está en .dockerignore)
+COPY . .
 
 # Instalar dependencias del backend
 WORKDIR /app/backend
 RUN npm install
 
-# Volver a la raíz
+# Volver a la raíz del proyecto
 WORKDIR /app
+
+# Crear carpeta de datos si no existe
+RUN mkdir -p /app/data
 
 # Exponer puerto
 EXPOSE 8080
+
+# Mostrar qué se copió (para debug)
+RUN ls -la /app/data/
 
 # Comando de inicio
 CMD ["node", "backend/src/index.js"]

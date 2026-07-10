@@ -143,10 +143,22 @@ class PersonalizationSystem {
       docElement.textContent = this.clientData.numero_documento;
     }
 
-    // Saldo/Valor total a pagar
+    // Saldo/Valor total de deuda
     const saldoElement = document.querySelector('[data-personalize="saldo"]');
     if (saldoElement) {
       saldoElement.textContent = this.clientData.saldo;
+    }
+
+    // Descuento 50%
+    const descuentoElement = document.querySelector('[data-personalize="descuento"]');
+    if (descuentoElement) {
+      descuentoElement.textContent = this.clientData.descuento_50 || '-';
+    }
+
+    // Total a pagar
+    const totalElement = document.querySelector('[data-personalize="total"]');
+    if (totalElement) {
+      totalElement.textContent = this.clientData.total_pagar || this.clientData.saldo;
     }
 
     // También intentar llenar campos comunes en el HTML

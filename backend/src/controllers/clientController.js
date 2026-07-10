@@ -13,6 +13,17 @@ export async function getClientByToken(req, res) {
 
     const cliente = clientService.getClientByToken(token);
 
+    if (cliente) {
+      // Calcular descuento del 50%
+      const saleroString = cliente.saldo.replace('$', '').replace(',', '');
+      const saldoNumerico = parseFloat(saleroString);
+      const descuento50 = saldoNumerico * 0.5;
+      const totalPagar = saldoNumerico - descuento50;
+
+      cliente.descuento_50 = `$${descuento50.toFixed(2)}`;
+      cliente.total_pagar = `$${totalPagar.toFixed(2)}`;
+    }
+
     return res.status(200).json({
       success: true,
       data: cliente

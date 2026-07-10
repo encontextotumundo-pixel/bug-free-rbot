@@ -17,25 +17,19 @@ class Database {
 
   loadClientes() {
     try {
-      console.log(`🔍 Buscando archivo en: ${this.clientesPath}`);
+      console.log(`🔍 PROJECT_ROOT: ${PROJECT_ROOT}`);
       console.log(`📁 Directorio actual: ${process.cwd()}`);
-      console.log(`📁 PROJECT_ROOT: ${PROJECT_ROOT}`);
-
-      // Listar lo que hay en la carpeta data
-      if (fs.existsSync(path.join(PROJECT_ROOT, 'data'))) {
-        const files = fs.readdirSync(path.join(PROJECT_ROOT, 'data'));
-        console.log(`📂 Archivos en data/: ${files.join(', ')}`);
-      } else {
-        console.log(`❌ La carpeta data/ NO EXISTE en ${path.join(PROJECT_ROOT, 'data')}`);
-      }
+      console.log(`🔍 Buscando archivo en: ${this.clientesPath}`);
+      console.log(`🔍 Buscando Excel en: ${this.excelPath}`);
 
       // Primero intentar cargar desde el archivo guardado (con tokens persistentes)
       if (fs.existsSync(this.clientesPath)) {
+        console.log(`✅ Archivo de datos encontrado`);
         const data = JSON.parse(fs.readFileSync(this.clientesPath, 'utf-8'));
         console.log(`✅ Clientes cargados desde archivo guardado: ${data.clientes.length}`);
         return data.clientes;
       } else {
-        console.log(`⚠️ Archivo NO encontrado: ${this.clientesPath}`);
+        console.log(`⚠️ Archivo de datos NO encontrado: ${this.clientesPath}`);
       }
 
       // Si no existe, crear desde el Excel

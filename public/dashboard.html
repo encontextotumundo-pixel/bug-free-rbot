@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard SMS Personalizado - Claro</title>
+    <title>Dashboard SMS - Claro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -12,213 +13,374 @@
             box-sizing: border-box;
         }
 
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff006e;
+            --accent: #ffbe0b;
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(20, 28, 60, 0.4);
+            --text-light: #e8eaed;
+            --text-dim: #b0b3b8;
+            --border-color: rgba(0, 212, 255, 0.1);
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: flex;
             min-height: 100vh;
-            padding: 20px;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(20, 28, 60, 0.8) 100%);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .header {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
+        .sidebar-header {
+            padding: 0 30px 40px;
+            border-bottom: 1px solid var(--border-color);
             margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-section {
+            padding: 20px 0;
+        }
+
+        .nav-label {
+            padding: 0 30px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-dim);
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+            font-weight: 600;
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        /* CONTENT */
+        .content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header-title h1 {
+            font-size: 32px;
+            margin-bottom: 5px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title p {
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn-header {
+            padding: 10px 20px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            color: var(--text-light);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-header:hover {
+            border-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+        }
+
+        /* STATS GRID */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 212, 255, 0.1);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        .stat-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: var(--text-light);
+        }
+
+        .stat-change {
+            font-size: 12px;
+            color: var(--primary);
+            margin-top: 10px;
+        }
+
+        /* MAIN GRID */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .header h1 {
-            color: #333;
-            font-size: 28px;
-            margin-bottom: 5px;
-        }
-
-        .header p {
-            color: #666;
-            font-size: 14px;
-        }
-
-        .header-stats {
-            display: flex;
-            gap: 30px;
-        }
-
-        .stat-box {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 32px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: #999;
-            margin-top: 5px;
-        }
-
-        .tabs {
-            display: flex;
-            gap: 10px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .tab-button {
-            padding: 12px 24px;
-            border: none;
-            background: #f0f0f0;
-            color: #666;
-            cursor: pointer;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .tab-button.active {
-            background: #667eea;
-            color: white;
-        }
-
-        .tab-button:hover {
-            background: #667eea;
-            color: white;
-        }
-
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
         .chart-container {
             position: relative;
             height: 300px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
 
-        .table-container {
+        /* TABLE STYLES */
+        .table-wrapper {
+            grid-column: 1 / -1;
             overflow-x: auto;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
 
         thead {
-            background: #f8f9fa;
+            border-bottom: 2px solid var(--border-color);
         }
 
         th {
             padding: 15px;
             text-align: left;
             font-weight: 600;
-            color: #333;
-            border-bottom: 2px solid #e0e0e0;
+            color: var(--text-dim);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         td {
             padding: 15px;
-            border-bottom: 1px solid #e0e0e0;
-            color: #666;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
         }
 
         tr:hover {
-            background: #f8f9fa;
+            background: rgba(0, 212, 255, 0.05);
         }
 
         .token {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 3px;
+            font-size: 11px;
+            color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+            padding: 6px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
         }
 
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-active {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        /* BUTTONS */
         .btn {
-            padding: 8px 16px;
+            padding: 8px 14px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .btn-copy {
-            background: #667eea;
-            color: white;
+        .btn-primary {
+            background: var(--primary);
+            color: var(--bg-dark);
         }
 
-        .btn-copy:hover {
-            background: #5568d3;
+        .btn-primary:hover {
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+            transform: translateY(-2px);
         }
 
-        .btn-edit {
-            background: #48bb78;
-            color: white;
-            margin-left: 5px;
+        .btn-secondary {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
-        .btn-edit:hover {
-            background: #38a169;
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: var(--bg-dark);
         }
 
-        .btn-export {
-            background: #ed8936;
-            color: white;
-            padding: 12px 24px;
-            margin-bottom: 20px;
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 11px;
         }
 
-        .btn-export:hover {
-            background: #dd6b20;
-        }
-
+        /* SEARCH */
         .search-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 20px;
         }
 
         .search-box input {
-            width: 100%;
-            max-width: 400px;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-light);
             font-size: 14px;
+            outline: none;
         }
 
+        .search-box input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .search-box i {
+            color: var(--text-dim);
+        }
+
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -226,10 +388,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 1000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(4px);
         }
 
         .modal.active {
@@ -237,233 +400,383 @@
         }
 
         .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(20, 28, 60, 0.9), rgba(10, 14, 39, 0.9));
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 12px;
             max-width: 500px;
             width: 90%;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            backdrop-filter: blur(10px);
         }
 
         .modal-content h2 {
-            margin-bottom: 20px;
-            color: #333;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #333;
+            margin-bottom: 8px;
+            color: var(--text-light);
             font-weight: 500;
+            font-size: 14px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-light);
             font-size: 14px;
+            transition: all 0.3s;
         }
 
         .form-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
         .modal-buttons {
             display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        /* TABS */
+        .tabs {
+            display: flex;
             gap: 10px;
-            margin-top: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
         }
 
-        .btn-primary {
-            background: #667eea;
-            color: white;
-            flex: 1;
+        .tab-button {
+            padding: 12px 24px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
         }
 
-        .btn-primary:hover {
-            background: #5568d3;
+        .tab-button.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
-            flex: 1;
+        .tab-button:hover {
+            color: var(--primary);
         }
 
-        .btn-secondary:hover {
-            background: #d0d0d0;
-        }
-
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .link-column {
-            max-width: 300px;
-            word-break: break-all;
-            font-size: 12px;
-        }
-
-        .success-message {
-            background: #c6f6d5;
-            color: #22543d;
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 20px;
+        .tab-content {
             display: none;
         }
 
-        .success-message.show {
+        .tab-content.active {
             display: block;
         }
 
+        /* SCROLLBAR */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1200px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                text-align: center;
+            .sidebar {
+                transform: translateX(-100%);
+                z-index: 999;
             }
 
-            .header-stats {
-                width: 100%;
-                justify-content: space-around;
-                margin-top: 20px;
+            .content {
+                margin-left: 0;
             }
 
             .stats-grid {
                 grid-template-columns: 1fr;
             }
 
-            table {
-                font-size: 12px;
-            }
-
-            th, td {
-                padding: 10px;
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <div>
-                <h1>📊 Dashboard SMS Personalizado</h1>
-                <p>Sistema de campañas de SMS con personalización avanzada</p>
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                </div>
             </div>
-            <div class="header-stats">
-                <div class="stat-box">
-                    <div class="stat-number" id="totalClients">0</div>
-                    <div class="stat-label">Clientes</div>
+
+            <div class="nav-section">
+                <div class="nav-label">Main</div>
+                <div class="nav-item active" onclick="switchTab('clientes')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="totalOpens">0</div>
-                    <div class="stat-label">Aperturas</div>
+                <div class="nav-item" onclick="switchTab('analytics')">
+                    <i class="fas fa-chart-area"></i>
+                    <span>Analítica</span>
                 </div>
-                <div class="stat-box">
-                    <div class="stat-number" id="totalClicks">0</div>
-                    <div class="stat-label">Clics</div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Management</div>
+                <div class="nav-item" onclick="switchTab('clientes')">
+                    <i class="fas fa-users"></i>
+                    <span>Clientes</span>
+                </div>
+                <div class="nav-item" onclick="switchTab('configuracion')">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Support</div>
+                <div class="nav-item">
+                    <i class="fas fa-headset"></i>
+                    <span>Ayuda</span>
                 </div>
             </div>
         </div>
 
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-button active" onclick="switchTab('clients')">👥 Clientes & Enlaces</button>
-            <button class="tab-button" onclick="switchTab('analytics')">📈 Analítica</button>
-            <button class="tab-button" onclick="switchTab('settings')">⚙️ Configuración</button>
-        </div>
-
-        <!-- TAB 1: Clientes & Enlaces -->
-        <div id="clients" class="tab-content active">
-            <div class="success-message" id="successMessage">✅ Operación completada exitosamente</div>
-
-            <div class="search-box">
-                <input type="text" id="searchInput" placeholder="Buscar por nombre, documento o teléfono..." onkeyup="filterTable()">
+        <!-- CONTENT -->
+        <div class="content">
+            <!-- HEADER -->
+            <div class="content-header">
+                <div class="header-title">
+                    <h1>SMS Personalizado</h1>
+                    <p>Gestión avanzada de campañas SMS con personalización</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-header">
+                        <i class="fas fa-download"></i> Exportar
+                    </button>
+                    <button class="btn-header">
+                        <i class="fas fa-sync"></i> Actualizar
+                    </button>
+                </div>
             </div>
 
-            <button class="btn btn-export" onclick="exportToExcel()">📥 Descargar Excel</button>
-
-            <div class="table-container">
-                <table id="clientsTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Cliente</th>
-                            <th>Documento</th>
-                            <th>Teléfono</th>
-                            <th>Token</th>
-                            <th>Enlace SMS</th>
-                            <th>Saldo</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="clientsTableBody">
-                        <tr><td colspan="8" class="loading"><div class="spinner"></div>Cargando clientes...</td></tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- TAB 2: Analítica -->
-        <div id="analytics" class="tab-content">
+            <!-- STATS -->
             <div class="stats-grid">
-                <div class="chart-container">
-                    <canvas id="eventTypesChart"></canvas>
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-label">Total Clientes</div>
+                    <div class="stat-value" id="totalClients">0</div>
+                    <div class="stat-change">✓ Todos activos</div>
                 </div>
-                <div class="chart-container">
-                    <canvas id="eventsByDateChart"></canvas>
+                <div class="stat-card">
+                    <div class="stat-icon">👁️</div>
+                    <div class="stat-label">Total Aperturas</div>
+                    <div class="stat-value" id="totalOpens">0</div>
+                    <div class="stat-change">Última 24h</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">🖱️</div>
+                    <div class="stat-label">Total Clics</div>
+                    <div class="stat-value" id="totalClicks">0</div>
+                    <div class="stat-change">Conversión</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-label">Eventos Totales</div>
+                    <div class="stat-value" id="totalEvents">0</div>
+                    <div class="stat-change">Registrados</div>
                 </div>
             </div>
-        </div>
 
-        <!-- TAB 3: Configuración -->
-        <div id="settings" class="tab-content">
-            <h2>Configuración del Sistema</h2>
-            <div style="margin-top: 20px; color: #666;">
-                <p><strong>🔐 URL de Azure Blob Storage:</strong><br>
-                https://jelptco.blob.core.windows.net/kiki/</p>
+            <!-- TABS -->
+            <div class="tabs">
+                <button class="tab-button active" onclick="switchTab('dashboard')">Dashboard</button>
+                <button class="tab-button" onclick="switchTab('clientes')">Clientes & Enlaces</button>
+                <button class="tab-button" onclick="switchTab('analytics')">Analítica</button>
+                <button class="tab-button" onclick="switchTab('configuracion')">Configuración</button>
+            </div>
 
-                <p style="margin-top: 15px;"><strong>🚀 URL de API Railway:</strong><br>
-                https://bug-free-rbot-production.up.railway.app</strong></p>
+            <!-- TAB: DASHBOARD -->
+            <div id="dashboard" class="tab-content active">
+                <div class="main-grid">
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Eventos por Tipo</span>
+                            <i class="fas fa-chart-pie" style="color: var(--primary);"></i>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="eventTypesChart"></canvas>
+                        </div>
+                    </div>
 
-                <p style="margin-top: 15px;"><strong>📂 Carpeta de Datos:</strong><br>
-                /data/clientes-con-tokens.json</p>
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Estadísticas</span>
+                            <i class="fas fa-info-circle" style="color: var(--secondary);"></i>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 15px;">
+                            <div style="padding: 15px; background: rgba(0, 212, 255, 0.05); border-left: 3px solid var(--primary); border-radius: 6px;">
+                                <div style="color: var(--text-dim); font-size: 12px;">Tasa Apertura</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--primary);" id="openRate">0%</div>
+                            </div>
+                            <div style="padding: 15px; background: rgba(255, 0, 110, 0.05); border-left: 3px solid var(--secondary); border-radius: 6px;">
+                                <div style="color: var(--text-dim); font-size: 12px;">Tasa Clics</div>
+                                <div style="font-size: 24px; font-weight: bold; color: var(--secondary);" id="clickRate">0%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <p style="margin-top: 15px;"><strong>📊 Eventos Registrados:</strong><br>
-                /data/events.json</p>
+                <div class="card">
+                    <div class="card-title">
+                        <span>Eventos por Fecha</span>
+                        <i class="fas fa-calendar" style="color: var(--accent);"></i>
+                    </div>
+                    <div class="chart-container" style="height: 250px;">
+                        <canvas id="eventsByDateChart"></canvas>
+                    </div>
+                </div>
+            </div>
 
-                <p style="margin-top: 15px;"><strong>🛡️ Rate Limiting:</strong><br>
-                10 solicitudes por IP cada 5 minutos</p>
+            <!-- TAB: CLIENTES -->
+            <div id="clientes" class="tab-content">
+                <div class="card">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchInput" placeholder="Buscar por nombre, documento o teléfono..." onkeyup="filterTable()">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <button class="btn btn-secondary btn-small" onclick="exportToExcel()">
+                            <i class="fas fa-download"></i> Descargar Excel
+                        </button>
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table id="clientsTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Cliente</th>
+                                    <th>Documento</th>
+                                    <th>Teléfono</th>
+                                    <th>Token</th>
+                                    <th>Enlace SMS</th>
+                                    <th>Saldo</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientsTableBody">
+                                <tr><td colspan="8" style="text-align: center; padding: 40px; color: var(--text-dim);">Cargando clientes...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: ANALYTICS -->
+            <div id="analytics" class="tab-content">
+                <div class="main-grid">
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Actividad Diaria</span>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="activityChart"></canvas>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">
+                            <span>Resumen</span>
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-dim);">Período</span>
+                                <span style="color: var(--text-light);">Últimos 7 días</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                                <span style="color: var(--text-dim);">Promedio Diario</span>
+                                <span style="color: var(--primary);"><span id="avgDaily">0</span> eventos</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span style="color: var(--text-dim);">Estado</span>
+                                <span class="badge badge-active">Activo</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CONFIGURACIÓN -->
+            <div id="configuracion" class="tab-content">
+                <div class="card">
+                    <div class="card-title">Configuración del Sistema</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div>
+                            <h3 style="color: var(--primary); margin-bottom: 15px; font-size: 14px;">Servicios</h3>
+                            <div style="color: var(--text-dim); font-size: 12px; line-height: 1.8;">
+                                <p><strong>Azure Blob:</strong><br>
+                                <span style="color: var(--primary);">jelptco.blob.core.windows.net/kiki/</span></p>
+                                <p style="margin-top: 10px;"><strong>API Railway:</strong><br>
+                                <span style="color: var(--primary);">bug-free-rbot-production.up.railway.app</span></p>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="color: var(--secondary); margin-bottom: 15px; font-size: 14px;">Seguridad</h3>
+                            <div style="color: var(--text-dim); font-size: 12px; line-height: 1.8;">
+                                <p><strong>Rate Limiting:</strong><br>
+                                <span style="color: var(--secondary);">10 req/IP/5 min</span></p>
+                                <p style="margin-top: 10px;"><strong>Tokens:</strong><br>
+                                <span style="color: var(--secondary);">UUID v4 únicos</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal para editar saldo -->
+    <!-- MODAL -->
     <div class="modal" id="editModal">
         <div class="modal-content">
             <h2>Actualizar Saldo</h2>
@@ -487,14 +800,12 @@
         let allStats = {};
         let currentEditToken = null;
 
-        // Cargar datos al iniciar
         window.onload = () => {
             loadClients();
             loadStats();
-            setInterval(loadStats, 30000); // Actualizar cada 30 segundos
+            setInterval(loadStats, 30000);
         };
 
-        // Cargar clientes
         async function loadClients() {
             try {
                 const response = await fetch('https://bug-free-rbot-production.up.railway.app/api/dashboard/clients');
@@ -506,37 +817,29 @@
                     document.getElementById('totalClients').textContent = result.total;
                 }
             } catch (error) {
-                console.error('Error cargando clientes:', error);
-                document.getElementById('clientsTableBody').innerHTML =
-                    '<tr><td colspan="8" style="color: red; text-align: center;">Error al cargar clientes</td></tr>';
+                console.error('Error:', error);
             }
         }
 
-        // Renderizar tabla de clientes
         function renderClients() {
             const tbody = document.getElementById('clientsTableBody');
             tbody.innerHTML = allClients.map(client => `
                 <tr>
                     <td>${client.id}</td>
-                    <td><strong>${client.nombre_completo}</strong></td>
+                    <td style="color: var(--primary); font-weight: 600;">${client.nombre_completo}</td>
                     <td>${client.numero_documento}</td>
                     <td>${client.telefono}</td>
-                    <td><span class="token">${client.token_unico}</span></td>
-                    <td class="link-column">
-                        <span title="https://jelptco.blob.core.windows.net/kiki/5.html?t=${client.token_unico}">
-                            ...?t=${client.token_unico.substring(0, 8)}...
-                        </span>
-                    </td>
-                    <td>${client.saldo}</td>
+                    <td><span class="token">${client.token_unico.substring(0, 12)}...</span></td>
+                    <td style="font-size: 11px; color: var(--text-dim);">?t=${client.token_unico.substring(0, 8)}...</td>
+                    <td style="color: var(--accent);">${client.saldo}</td>
                     <td>
-                        <button class="btn btn-copy" onclick="copyLink('${client.token_unico}')">Copiar</button>
-                        <button class="btn btn-edit" onclick="openEditModal('${client.token_unico}', '${client.nombre_completo}')">Editar</button>
+                        <button class="btn btn-primary btn-small" onclick="copyLink('${client.token_unico}')">Copiar</button>
+                        <button class="btn btn-secondary btn-small" style="margin-left: 5px;" onclick="openEditModal('${client.token_unico}', '${client.nombre_completo}')">Editar</button>
                     </td>
                 </tr>
             `).join('');
         }
 
-        // Cargar estadísticas
         async function loadStats() {
             try {
                 const response = await fetch('https://bug-free-rbot-production.up.railway.app/api/dashboard/stats');
@@ -544,84 +847,108 @@
 
                 if (result.success) {
                     allStats = result.data;
-                    document.getElementById('totalOpens').textContent = allStats.total_opens;
-                    document.getElementById('totalClicks').textContent = allStats.total_clicks;
+                    updateStats();
                     renderCharts();
                 }
             } catch (error) {
-                console.error('Error cargando estadísticas:', error);
+                console.error('Error:', error);
             }
         }
 
-        // Renderizar gráficos
-        function renderCharts() {
-            // Gráfico de tipos de eventos
-            const eventTypesCtx = document.getElementById('eventTypesChart').getContext('2d');
-            new Chart(eventTypesCtx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Aperturas', 'Clics'],
-                    datasets: [{
-                        data: [allStats.events_by_type.open || 0, allStats.events_by_type.click || 0],
-                        backgroundColor: ['#667eea', '#48bb78'],
-                        borderColor: ['#667eea', '#48bb78'],
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Eventos por Tipo'
-                        }
-                    }
-                }
-            });
+        function updateStats() {
+            document.getElementById('totalOpens').textContent = allStats.total_opens;
+            document.getElementById('totalClicks').textContent = allStats.total_clicks;
+            document.getElementById('totalEvents').textContent = allStats.total_events;
 
-            // Gráfico de eventos por fecha
+            const openRate = allClients.length > 0 ? ((allStats.total_opens / allClients.length) * 100).toFixed(1) : 0;
+            const clickRate = allStats.total_opens > 0 ? ((allStats.total_clicks / allStats.total_opens) * 100).toFixed(1) : 0;
+
+            document.getElementById('openRate').textContent = openRate + '%';
+            document.getElementById('clickRate').textContent = clickRate + '%';
+
+            const dates = Object.keys(allStats.events_by_date || {});
+            document.getElementById('avgDaily').textContent = dates.length > 0 ? (allStats.total_events / dates.length).toFixed(0) : 0;
+        }
+
+        function renderCharts() {
+            const ctx1 = document.getElementById('eventTypesChart')?.getContext('2d');
+            if (ctx1) {
+                new Chart(ctx1, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Aperturas', 'Clics'],
+                        datasets: [{
+                            data: [allStats.events_by_type?.open || 0, allStats.events_by_type?.click || 0],
+                            backgroundColor: ['#00d4ff', '#ff006e'],
+                            borderColor: '#0a0e27',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { position: 'bottom', labels: { color: '#e8eaed' } } }
+                    }
+                });
+            }
+
             const dates = Object.keys(allStats.events_by_date || {});
             const counts = Object.values(allStats.events_by_date || {});
 
-            const eventsByDateCtx = document.getElementById('eventsByDateChart').getContext('2d');
-            new Chart(eventsByDateCtx, {
-                type: 'bar',
-                data: {
-                    labels: dates,
-                    datasets: [{
-                        label: 'Eventos',
-                        data: counts,
-                        backgroundColor: '#667eea',
-                        borderColor: '#667eea',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                            text: 'Eventos por Fecha'
-                        }
+            const ctx2 = document.getElementById('eventsByDateChart')?.getContext('2d');
+            if (ctx2) {
+                new Chart(ctx2, {
+                    type: 'bar',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Eventos',
+                            data: counts,
+                            backgroundColor: '#00d4ff',
+                            borderColor: '#00d4ff',
+                            borderWidth: 0
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                stepSize: 1
-                            }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#e8eaed' } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#b0b3b8' }, grid: { color: 'rgba(0,212,255,0.05)' } },
+                            x: { ticks: { color: '#b0b3b8' }, grid: { color: 'rgba(0,212,255,0.05)' } }
                         }
                     }
-                }
-            });
+                });
+            }
+
+            const ctx3 = document.getElementById('activityChart')?.getContext('2d');
+            if (ctx3) {
+                new Chart(ctx3, {
+                    type: 'line',
+                    data: {
+                        labels: dates,
+                        datasets: [{
+                            label: 'Actividad',
+                            data: counts,
+                            borderColor: '#00d4ff',
+                            backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { labels: { color: '#e8eaed' } } },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { color: '#b0b3b8' }, grid: { color: 'rgba(0,212,255,0.05)' } },
+                            x: { ticks: { color: '#b0b3b8' }, grid: { color: 'rgba(0,212,255,0.05)' } }
+                        }
+                    }
+                });
+            }
         }
 
-        // Funciones auxiliares
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
@@ -631,16 +958,14 @@
 
         function copyLink(token) {
             const link = `https://jelptco.blob.core.windows.net/kiki/5.html?t=${token}`;
-            navigator.clipboard.writeText(link).then(() => {
-                showSuccess('Enlace copiado al portapapeles');
-            });
+            navigator.clipboard.writeText(link);
+            alert('✓ Enlace copiado al portapapeles');
         }
 
         function filterTable() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const term = document.getElementById('searchInput').value.toLowerCase();
             document.querySelectorAll('#clientsTableBody tr').forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+                row.style.display = row.textContent.toLowerCase().includes(term) ? '' : 'none';
             });
         }
 
@@ -657,37 +982,23 @@
 
         async function saveBalance() {
             const newBalance = document.getElementById('editBalance').value;
-            if (!newBalance) {
-                alert('Ingresa el nuevo saldo');
-                return;
-            }
+            if (!newBalance) return;
 
             try {
-                const response = await fetch(
-                    `https://bug-free-rbot-production.up.railway.app/api/dashboard/clients/${currentEditToken}/update-balance`,
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ saldo: newBalance })
-                    }
-                );
-
-                if (response.ok) {
-                    loadClients();
-                    closeModal();
-                    showSuccess('Saldo actualizado correctamente');
-                }
+                await fetch(`https://bug-free-rbot-production.up.railway.app/api/dashboard/clients/${currentEditToken}/update-balance`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ saldo: newBalance })
+                });
+                loadClients();
+                closeModal();
             } catch (error) {
                 console.error('Error:', error);
-                alert('Error al actualizar saldo');
             }
         }
 
         function exportToExcel() {
-            const csv = [
-                ['ID', 'Cliente', 'Documento', 'Teléfono', 'Token', 'Enlace SMS', 'Saldo']
-            ];
-
+            const csv = [['ID', 'Cliente', 'Documento', 'Teléfono', 'Token', 'Enlace SMS', 'Saldo']];
             allClients.forEach(client => {
                 csv.push([
                     client.id,
@@ -701,18 +1012,11 @@
             });
 
             const csvContent = csv.map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csvContent], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = `clientes-tokens-${new Date().toISOString().split('T')[0]}.csv`;
             link.click();
-        }
-
-        function showSuccess(message) {
-            const msg = document.getElementById('successMessage');
-            msg.textContent = '✅ ' + message;
-            msg.classList.add('show');
-            setTimeout(() => msg.classList.remove('show'), 3000);
         }
     </script>
 </body>

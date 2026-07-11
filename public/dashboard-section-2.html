@@ -401,7 +401,7 @@
                             <td>${client.id}</td>
                             <td>${client.nombre_completo}</td>
                             <td>${client.numero_documento}</td>
-                            <td>${client.telefono}</td>
+                            <td>${client.telefono.replace('+57 ', '')}</td>
                             <td>
                                 <div class="link-text">
                                     ${blobUrl}loan-simulator.php.html?t=${client.token_unico}

@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard SMS - Sección 2 Simulador</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d4ff;
+            --secondary: #ff006e;
+            --accent: #ffbe0b;
+            --bg-dark: #0a0e27;
+            --bg-card: rgba(20, 28, 60, 0.4);
+            --text-light: #e8eaed;
+            --text-dim: #b0b3b8;
+            --border-color: rgba(0, 212, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 280px;
+            background: linear-gradient(180deg, rgba(10, 14, 39, 0.95) 0%, rgba(20, 28, 60, 0.8) 100%);
+            border-right: 1px solid var(--border-color);
+            padding: 30px 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 30px 40px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-section {
+            padding: 20px 0;
+        }
+
+        .nav-label {
+            padding: 0 30px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            padding: 12px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-dim);
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            border-left-color: var(--primary);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        /* CONTENT */
+        .content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        .header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        .section-tabs {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 20px;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--text-dim);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -21px;
+        }
+
+        .tab-btn:hover {
+            color: var(--primary);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .data-table thead {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .data-table th {
+            padding: 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary);
+            letter-spacing: 1px;
+        }
+
+        .data-table td {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 14px;
+        }
+
+        .data-table tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #ff1a7c;
+        }
+
+        .link-btn {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .link-btn:hover {
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                    Panel SMS
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Navegación</div>
+                <a href="dashboard.html" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Sección 1 - Dashboard</span>
+                </a>
+                <div class="nav-item active">
+                    <i class="fas fa-calculator"></i>
+                    <span>Sección 2 - Simulador</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-label">Herramientas</div>
+                <div class="nav-item" onclick="goToSection('clientes')">
+                    <i class="fas fa-users"></i>
+                    <span>Gestión de Clientes</span>
+                </div>
+                <div class="nav-item" onclick="goToSection('enlaces')">
+                    <i class="fas fa-link"></i>
+                    <span>Enlaces Personalizados</span>
+                </div>
+                <div class="nav-item" onclick="goToSection('analisis')">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Análisis Simulador</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="header-section">
+                <div>
+                    <h1 class="title">🧮 Simulador de Créditos</h1>
+                    <p style="color: var(--text-dim); margin-top: 10px;">Sección 2 - Gestión personalizada de simulaciones</p>
+                </div>
+            </div>
+
+            <div class="section-tabs">
+                <button class="tab-btn active" onclick="switchTab('clientes')">Clientes Simulador</button>
+                <button class="tab-btn" onclick="switchTab('enlaces')">Enlaces Generados</button>
+                <button class="tab-btn" onclick="switchTab('analisis')">Análisis</button>
+            </div>
+
+            <!-- TAB: CLIENTES SIMULADOR -->
+            <div id="tab-clientes" class="tab-content" style="display: block;">
+                <h2 style="margin-bottom: 20px;">Gestión de Clientes para Simulador</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Total de Clientes</div>
+                        <div class="stat-value" id="stat-total-clients">20</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Enlaces Generados</div>
+                        <div class="stat-value" id="stat-generated-links">20</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Simulaciones Completadas</div>
+                        <div class="stat-value" id="stat-completed">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Tasa de Conversión</div>
+                        <div class="stat-value" id="stat-conversion">0%</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 20px;">Clientes Disponibles</h3>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Documento</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clients-table-body">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    <div class="empty-state-icon">⏳</div>
+                                    <p>Cargando clientes...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: ENLACES GENERADOS -->
+            <div id="tab-enlaces" class="tab-content" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Enlaces Personalizados para Simulador</h2>
+                <p style="color: var(--text-dim); margin-bottom: 20px;">
+                    Cada cliente tiene un enlace único con sus datos precargados
+                </p>
+
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Enlace</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="links-table-body">
+                            <tr>
+                                <td colspan="3" class="empty-state">
+                                    <div class="empty-state-icon">⏳</div>
+                                    <p>Cargando enlaces...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- TAB: ANALISIS -->
+            <div id="tab-analisis" class="tab-content" style="display: none;">
+                <h2 style="margin-bottom: 20px;">Análisis de Simulaciones</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-label">Simulaciones en Progreso</div>
+                        <div class="stat-value" id="stat-in-progress">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Solicitudes de Crédito</div>
+                        <div class="stat-value" id="stat-credit-requests">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Monto Promedio Simulado</div>
+                        <div class="stat-value" id="stat-avg-amount">$0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Plazo Promedio</div>
+                        <div class="stat-value" id="stat-avg-term">0 meses</div>
+                    </div>
+                </div>
+
+                <h3 style="margin-bottom: 20px;">Evento de Actividad</h3>
+                <div class="data-table" style="margin-top: 20px;">
+                    <div style="padding: 20px; text-align: center; color: var(--text-dim);">
+                        <p>Los datos de análisis se actualizan en tiempo real</p>
+                        <p style="font-size: 12px; margin-top: 10px;">Sistema listo para recibir simulaciones de crédito</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://bug-free-rbot-production.up.railway.app';
+
+        // Cargar clientes al inicializar
+        async function loadClients() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/dashboard/clients`);
+                const data = await response.json();
+
+                if (data.success && data.data) {
+                    const clients = data.data.clientes || [];
+                    populateClientsTable(clients);
+                    populateLinksTable(clients);
+                    updateStats(clients);
+                }
+            } catch (error) {
+                console.error('Error cargando clientes:', error);
+                document.getElementById('clients-table-body').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="empty-state">
+                            <div class="empty-state-icon">❌</div>
+                            <p>Error al cargar clientes</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function populateClientsTable(clients) {
+            const tbody = document.getElementById('clients-table-body');
+            tbody.innerHTML = clients.map((client, idx) => `
+                <tr>
+                    <td>${client.id}</td>
+                    <td>${client.nombre_completo}</td>
+                    <td>${client.numero_documento}</td>
+                    <td>${client.telefono}</td>
+                    <td>
+                        <button class="link-btn" onclick="openSimulatorLink('${client.token_unico}')">
+                            <i class="fas fa-external-link-alt"></i> Abrir Simulador
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function populateLinksTable(clients) {
+            const tbody = document.getElementById('links-table-body');
+            const baseUrl = window.location.origin;
+
+            tbody.innerHTML = clients.map((client) => {
+                const simulatorLink = `${baseUrl}/loan-simulator-personalized.html?t=${client.token_unico}`;
+                return `
+                    <tr>
+                        <td>${client.nombre_completo}</td>
+                        <td style="font-size: 12px; word-break: break-all; font-family: monospace;">
+                            ${simulatorLink}
+                        </td>
+                        <td>
+                            <button class="copy-btn" onclick="copyToClipboard('${simulatorLink}')">
+                                <i class="fas fa-copy"></i> Copiar
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStats(clients) {
+            document.getElementById('stat-total-clients').textContent = clients.length;
+            document.getElementById('stat-generated-links').textContent = clients.length;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('✓ Enlace copiado al portapapeles');
+            }).catch(err => {
+                console.error('Error copiando:', err);
+            });
+        }
+
+        function openSimulatorLink(token) {
+            const baseUrl = window.location.origin;
+            window.open(`${baseUrl}/loan-simulator-personalized.html?t=${token}`, '_blank');
+        }
+
+        function switchTab(tabName) {
+            // Ocultar todas las tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+
+            // Desactivar todos los botones
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            // Mostrar la tab seleccionada
+            document.getElementById(`tab-${tabName}`).style.display = 'block';
+
+            // Activar el botón seleccionado
+            event.target.classList.add('active');
+        }
+
+        function goToSection(section) {
+            console.log('Ir a sección:', section);
+        }
+
+        // Cargar clientes cuando se carga la página
+        loadClients();
+    </script>
+</body>
+</html>

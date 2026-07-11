@@ -432,7 +432,8 @@
                 const data = await response.json();
 
                 if (data.success && data.data) {
-                    const clients = data.data.clientes || [];
+                    // data.data es un array directo de clientes
+                    const clients = Array.isArray(data.data) ? data.data : (data.data.clientes || []);
                     populateClientsTable(clients);
                     populateLinksTable(clients);
                     updateStats(clients);

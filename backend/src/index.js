@@ -7,6 +7,7 @@ import { rateLimiter } from './middleware/rateLimiter.js';
 import clientRoutes from './routes/clients.js';
 import eventRoutes from './routes/events.js';
 import dashboardRoutes from './routes/dashboard.js';
+import loanRoutes from './routes/loan.js';
 
 dotenv.config();
 
@@ -36,6 +37,7 @@ app.use(rateLimiter);
 app.use('/api/client', clientRoutes);
 app.use('/api/event', eventRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/loan', loanRoutes);
 
 // Health check
 app.get('/health', (req, res) => {

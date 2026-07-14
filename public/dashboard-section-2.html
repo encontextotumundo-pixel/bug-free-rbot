@@ -268,11 +268,38 @@
             transform: none;
         }
 
+        .btn-download {
+            background: linear-gradient(135deg, var(--primary), #00e6ff);
+            color: #0a0e27;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-download:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .header-actions {
             display: flex;
             gap: 15px;
             align-items: center;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .reload-status {
@@ -378,6 +405,9 @@
                 <div class="header-actions">
                     <button class="btn-reload" id="reloadBtn" onclick="reloadClientes()">
                         <i class="fas fa-sync-alt"></i> Recargar Clientes
+                    </button>
+                    <button class="btn-download" id="downloadBtn" onclick="downloadClientesExcel()">
+                        <i class="fas fa-download"></i> Descargar Excel
                     </button>
                     <div class="reload-status" id="reloadStatus"></div>
                 </div>
@@ -514,6 +544,37 @@
                 setTimeout(() => {
                     reloadStatus.classList.remove('active');
                 }, 3000);
+            }
+        }
+
+        async function downloadClientesExcel() {
+            const downloadBtn = document.getElementById('downloadBtn');
+            const blobUrl = localStorage.getItem('blobUrl') || '';
+
+            downloadBtn.disabled = true;
+
+            try {
+                const queryParams = new URLSearchParams({ blobUrl });
+                const response = await fetch(`${API_BASE_URL}/api/admin/export-clients?${queryParams}`);
+
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `clientes-${new Date().toISOString().split('T')[0]}.xlsx`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert(`❌ Error descargando Excel: ${error.message}`);
+                console.error('Error:', error);
+            } finally {
+                downloadBtn.disabled = false;
             }
         }
 

@@ -106,6 +106,51 @@ class Database {
     this.clientes = this.loadClientes();
   }
 
+  reloadClientesFromExcel() {
+    try {
+      console.log('🔄 Recargando clientes desde Excel...');
+      const workbook = XLSX.readFile(this.excelPath);
+      const sheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[sheetName];
+      const data = XLSX.utils.sheet_to_json(worksheet);
+
+      const clientesProcessados = [];
+      data.forEach((row, index) => {
+        const nombreCompleto = row['23CODE RECORDS'] || '';
+        const telefono = row['__EMPTY'] || '';
+        const numeroDocumento = row['__EMPTY_1'] || '';
+
+        if (nombreCompleto && nombreCompleto.toLowerCase() === 'nombre y apellido') {
+          return;
+        }
+        if (!nombreCompleto || nombreCompleto.trim() === '') {
+          return;
+        }
+
+        const token = this.generateUUID();
+
+        clientesProcessados.push({
+          id: clientesProcessados.length + 1,
+          nombre_completo: nombreCompleto.trim(),
+          numero_documento: String(numeroDocumento).trim(),
+          telefono: String(telefono).trim(),
+          token_unico: token,
+          saldo: '$0.00',
+          estado: 'activo'
+        });
+      });
+
+      this.saveClientes(clientesProcessados);
+      this.clientes = clientesProcessados;
+
+      console.log(`✅ Clientes recargados del Excel: ${clientesProcessados.length}`);
+      return { success: true, count: clientesProcessados.length };
+    } catch (error) {
+      console.error('Error recargando clientes:', error.message);
+      return { success: false, error: error.message };
+    }
+  }
+
   findClientByToken(token) {
     return this.clientes.find(c => c.token_unico === token);
   }

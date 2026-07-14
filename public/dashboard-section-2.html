@@ -242,6 +242,52 @@
             background: #00e6ff;
         }
 
+        .btn-reload {
+            background: linear-gradient(135deg, var(--accent), #ff006e);
+            color: #0a0e27;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-reload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 190, 11, 0.3);
+        }
+
+        .btn-reload:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .reload-status {
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 8px 12px;
+            background: rgba(0, 212, 255, 0.05);
+            border-radius: 4px;
+            display: none;
+        }
+
+        .reload-status.active {
+            display: inline-block;
+        }
+
         .link-text {
             font-family: monospace;
             font-size: 11px;
@@ -327,6 +373,13 @@
                     <label>URL Base del Contenedor Blob Storage:</label>
                     <input type="text" id="blobUrl" placeholder="Ej: https://propulsornequi2026.blob.core.windows.net/mamberroi/neq/1/access-passed/">
                     <button class="btn-save" onclick="saveBlobUrl()">💾 Guardar URL</button>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn-reload" id="reloadBtn" onclick="reloadClientes()">
+                        <i class="fas fa-sync-alt"></i> Recargar Clientes
+                    </button>
+                    <div class="reload-status" id="reloadStatus"></div>
                 </div>
 
                 <h3 style="margin-bottom: 20px;">Clientes con Enlaces Personalizados</h3>
@@ -429,6 +482,39 @@
             }).catch(() => {
                 alert('Error copiando el enlace');
             });
+        }
+
+        async function reloadClientes() {
+            const reloadBtn = document.getElementById('reloadBtn');
+            const reloadStatus = document.getElementById('reloadStatus');
+
+            reloadBtn.disabled = true;
+            reloadStatus.textContent = '⏳ Recargando clientes...';
+            reloadStatus.classList.add('active');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/admin/reload-clientes`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    reloadStatus.textContent = `✅ ${data.count} clientes cargados correctamente`;
+                    setTimeout(() => loadClients(), 500);
+                } else {
+                    reloadStatus.textContent = `❌ Error: ${data.error}`;
+                }
+            } catch (error) {
+                reloadStatus.textContent = `❌ Error: ${error.message}`;
+                console.error('Error recargando clientes:', error);
+            } finally {
+                reloadBtn.disabled = false;
+                setTimeout(() => {
+                    reloadStatus.classList.remove('active');
+                }, 3000);
+            }
         }
 
         function switchTab(tabName, event) {

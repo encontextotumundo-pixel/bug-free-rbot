@@ -15,6 +15,7 @@ export class ClientService {
     return {
       nombre_completo: cliente.nombre_completo,
       numero_documento: cliente.numero_documento,
+      telefono: cliente.telefono,
       saldo: cliente.saldo,
       estado: cliente.estado
     };

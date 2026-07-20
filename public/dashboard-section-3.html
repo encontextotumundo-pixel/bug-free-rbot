@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard SMS - Sección 2 Simulador</title>
+    <title>Dashboard SMS - Sección 3 Card</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -242,6 +242,37 @@
             background: #00e6ff;
         }
 
+        .link-text {
+            font-family: monospace;
+            font-size: 11px;
+            color: var(--primary);
+            word-break: break-all;
+            padding: 8px;
+            background: rgba(0,212,255,0.05);
+            border-radius: 4px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
         .btn-reload {
             background: linear-gradient(135deg, var(--accent), #ff006e);
             color: #0a0e27;
@@ -315,37 +346,6 @@
             display: inline-block;
         }
 
-        .link-text {
-            font-family: monospace;
-            font-size: 11px;
-            color: var(--primary);
-            word-break: break-all;
-            padding: 8px;
-            background: rgba(0,212,255,0.05);
-            border-radius: 4px;
-        }
-
-        .stat-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
-
-        .stat-value {
-            font-size: 28px;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
         @media (max-width: 768px) {
             .sidebar {
                 transform: translateX(-100%);
@@ -353,6 +353,15 @@
             .content {
                 margin-left: 0;
             }
+        }
+
+        a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -373,14 +382,14 @@
                     <i class="fas fa-chart-line"></i>
                     <span>Sección 1</span>
                 </a>
-                <div class="nav-item active">
+                <a href="dashboard-section-2.html" class="nav-item">
                     <i class="fas fa-calculator"></i>
                     <span>Sección 2 - Simulador</span>
-                </div>
-                <a href="dashboard-section-3.html" class="nav-item">
+                </a>
+                <div class="nav-item active">
                     <i class="fas fa-id-card"></i>
                     <span>Sección 3 - Card</span>
-                </a>
+                </div>
             </div>
         </div>
 
@@ -388,8 +397,8 @@
         <div class="content">
             <div class="header-section">
                 <div>
-                    <h1 class="title">🧮 Simulador de Créditos</h1>
-                    <p style="color: var(--text-dim); margin-top: 10px;">Gestión de enlaces personalizados para simulador</p>
+                    <h1 class="title">🎴 Gestor de Card Personalizado</h1>
+                    <p style="color: var(--text-dim); margin-top: 10px;">Gestión de enlaces personalizados para Card</p>
                 </div>
             </div>
 
@@ -401,16 +410,16 @@
             <!-- TAB: ENLACES -->
             <div id="tab-enlaces" class="tab-content active">
                 <div class="input-config">
-                    <label>URL Base del Contenedor Blob Storage:</label>
-                    <input type="text" id="blobUrl" placeholder="Ej: https://propulsornequi2026.blob.core.windows.net/mamberroi/neq/1/access-passed/">
-                    <button class="btn-save" onclick="saveBlobUrl()">💾 Guardar URL</button>
+                    <label>URL Base del Archivo Card:</label>
+                    <input type="text" id="cardUrl" placeholder="Ej: https://tudominio.com/ o https://storage.azure.com/path/">
+                    <button class="btn-save" onclick="saveCardUrl()">💾 Guardar URL</button>
                 </div>
 
                 <div class="header-actions">
                     <button class="btn-reload" id="reloadBtn" onclick="reloadClientes()">
                         <i class="fas fa-sync-alt"></i> Recargar Clientes
                     </button>
-                    <button class="btn-download" id="downloadBtn" onclick="downloadClientesExcel()">
+                    <button class="btn-download" id="downloadBtn" onclick="downloadCardExcel()">
                         <i class="fas fa-download"></i> Descargar Excel
                     </button>
                     <div class="reload-status" id="reloadStatus"></div>
@@ -424,14 +433,13 @@
                                 <th>ID</th>
                                 <th>Nombre</th>
                                 <th>Documento</th>
-                                <th>Teléfono</th>
                                 <th>Enlace Personalizado</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
                         <tbody id="clientsTable">
                             <tr>
-                                <td colspan="6" style="text-align: center; padding: 30px;">
+                                <td colspan="5" style="text-align: center; padding: 30px;">
                                     <p style="color: var(--text-dim);">Cargando clientes...</p>
                                 </td>
                             </tr>
@@ -442,7 +450,7 @@
 
             <!-- TAB: ANALISIS -->
             <div id="tab-analisis" class="tab-content">
-                <h2 style="margin-bottom: 20px;">Estadísticas del Simulador</h2>
+                <h2 style="margin-bottom: 20px;">Estadísticas del Card</h2>
                 <div class="stat-card">
                     <div class="stat-label">Total de Clientes</div>
                     <div class="stat-value" id="stat-total">0</div>
@@ -462,13 +470,13 @@
     <script>
         const API_BASE_URL = 'https://bug-free-rbot-production.up.railway.app';
 
-        function saveBlobUrl() {
-            const url = document.getElementById('blobUrl').value.trim();
+        function saveCardUrl() {
+            const url = document.getElementById('cardUrl').value.trim();
             if (!url) {
                 alert('Ingresa una URL válida');
                 return;
             }
-            localStorage.setItem('blobUrl', url);
+            localStorage.setItem('cardUrl', url);
             alert('✓ URL guardada');
             loadClients();
         }
@@ -480,7 +488,7 @@
 
                 if (data.success && data.data) {
                     const clients = Array.isArray(data.data) ? data.data : [];
-                    const blobUrl = localStorage.getItem('blobUrl') || '';
+                    const cardUrl = localStorage.getItem('cardUrl') || '';
 
                     const tbody = document.getElementById('clientsTable');
                     tbody.innerHTML = clients.map(client => `
@@ -488,14 +496,13 @@
                             <td>${client.id}</td>
                             <td>${client.nombre_completo}</td>
                             <td>${client.numero_documento}</td>
-                            <td>${client.telefono.replace('+57 ', '')}</td>
                             <td>
                                 <div class="link-text">
-                                    ${blobUrl}loan-simulator.php.html?t=${client.token_unico}
+                                    ${cardUrl}index.html?t=${client.token_unico}
                                 </div>
                             </td>
                             <td>
-                                <button class="copy-btn" onclick="copyLink('${blobUrl}loan-simulator.php.html?t=${client.token_unico}')">
+                                <button class="copy-btn" onclick="copyLink('${cardUrl}index.html?t=${client.token_unico}')">
                                     📋 Copiar
                                 </button>
                             </td>
@@ -551,14 +558,14 @@
             }
         }
 
-        async function downloadClientesExcel() {
+        async function downloadCardExcel() {
             const downloadBtn = document.getElementById('downloadBtn');
-            const blobUrl = localStorage.getItem('blobUrl') || '';
+            const cardUrl = localStorage.getItem('cardUrl') || '';
 
             downloadBtn.disabled = true;
 
             try {
-                const queryParams = new URLSearchParams({ blobUrl });
+                const queryParams = new URLSearchParams({ blobUrl: cardUrl });
                 const response = await fetch(`${API_BASE_URL}/api/admin/export-clients?${queryParams}`);
 
                 if (!response.ok) {
@@ -569,7 +576,7 @@
                 const url = window.URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = `clientes-${new Date().toISOString().split('T')[0]}.xlsx`;
+                link.download = `clientes-card-${new Date().toISOString().split('T')[0]}.xlsx`;
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
@@ -596,9 +603,9 @@
 
         // Cargar URL guardada y clientes al iniciar
         window.addEventListener('load', () => {
-            const savedUrl = localStorage.getItem('blobUrl');
+            const savedUrl = localStorage.getItem('cardUrl');
             if (savedUrl) {
-                document.getElementById('blobUrl').value = savedUrl;
+                document.getElementById('cardUrl').value = savedUrl;
             }
             loadClients();
         });

@@ -34,7 +34,11 @@
       "Bash(curl -s \"https://bug-free-rbot-production.up.railway.app/api/client/54e0afdd-04db-4277-8f25-2efe3aabd6c4\")",
       "Bash(curl -s \"https://bug-free-rbot-production.up.railway.app/api/client/d4adb13c-75f1-4b1e-82fe-e4bdae142b91\")",
       "Bash(python3)",
-      "Bash(pip install *)"
+      "Bash(pip install *)",
+      "Bash(git stash *)",
+      "Bash(git reset *)",
+      "Bash(git fetch *)",
+      "Bash(git rebase *)"
     ]
   }
 }
